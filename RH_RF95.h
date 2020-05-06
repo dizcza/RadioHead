@@ -6,7 +6,7 @@
 //
 // Author: Mike McCauley (mikem@airspayce.com)
 // Copyright (C) 2014 Mike McCauley
-// $Id: RH_RF95.h,v 1.21 2017/11/06 00:04:08 mikem Exp $
+// $Id: RH_RF95.h,v 1.24 2020/04/09 23:40:34 mikem Exp mikem $
 // 
 
 #ifndef RH_RF95_h
@@ -89,7 +89,7 @@
 #define RH_RF95_REG_29_FEI_MID                             0x29
 #define RH_RF95_REG_2A_FEI_LSB                             0x2a
 #define RH_RF95_REG_2C_RSSI_WIDEBAND                       0x2c
-#define RH_RF95_REG_31_DETECT_OPTIMIZ                      0x31
+#define RH_RF95_REG_31_DETECT_OPTIMIZE                     0x31
 #define RH_RF95_REG_33_INVERT_IQ                           0x33
 #define RH_RF95_REG_37_DETECTION_THRESHOLD                 0x37
 #define RH_RF95_REG_39_SYNC_WORD                           0x39
@@ -132,7 +132,7 @@
 #define RH_RF95_PA_RAMP_2MS                           0x01
 #define RH_RF95_PA_RAMP_1MS                           0x02
 #define RH_RF95_PA_RAMP_500US                         0x03
-#define RH_RF95_PA_RAMP_250US                         0x0
+#define RH_RF95_PA_RAMP_250US                         0x04
 #define RH_RF95_PA_RAMP_125US                         0x05
 #define RH_RF95_PA_RAMP_100US                         0x06
 #define RH_RF95_PA_RAMP_62US                          0x07
@@ -161,7 +161,7 @@
 #define RH_RF95_LNA_BOOST_LF_DEFAULT                  0x00
 #define RH_RF95_LNA_BOOST_HF                          0x03
 #define RH_RF95_LNA_BOOST_HF_DEFAULT                  0x00
-#define RH_RF95_LNA_BOOST_HF_150PC                    0x11
+#define RH_RF95_LNA_BOOST_HF_150PC                    0x03
 
 // RH_RF95_REG_11_IRQ_FLAGS_MASK                      0x11
 #define RH_RF95_RX_TIMEOUT_MASK                       0x80
@@ -225,10 +225,15 @@
 #define RH_RF95_SPREADING_FACTOR_1024CPS              0xa0
 #define RH_RF95_SPREADING_FACTOR_2048CPS              0xb0
 #define RH_RF95_SPREADING_FACTOR_4096CPS              0xc0
-#define RH_RF95_TX_CONTINUOUS_MOE                     0x08
+#define RH_RF95_TX_CONTINUOUS_MODE                    0x08
 
 #define RH_RF95_PAYLOAD_CRC_ON                        0x04
 #define RH_RF95_SYM_TIMEOUT_MSB                       0x03
+
+// RH_RF95_REG_26_MODEM_CONFIG3
+#define RH_RF95_MOBILE_NODE                           0x08 // HopeRF term
+#define RH_RF95_LOW_DATA_RATE_OPTIMIZE                0x08 // Semtechs term
+#define RH_RF95_AGC_AUTO_ON                           0x04
 
 // RH_RF95_REG_4B_TCXO                                0x4b
 #define RH_RF95_TCXO_TCXO_INPUT_ON                    0x10
@@ -257,7 +262,7 @@
 /// - the excellent Rocket Scream Mini Ultra Pro with the RFM95W 
 ///   http://www.rocketscream.com/blog/product/mini-ultra-pro-with-radio/
 /// - Lora1276 module from NiceRF http://www.nicerf.com/product_view.aspx?id=99
-/// - Adafruit Feather M0 with RFM95 
+/// - Adafruit Feather M0 with RFM95
 /// - The very fine Talk2 Whisper Node LoRa boards https://wisen.com.au/store/products/whisper-node-lora
 ///   an Arduino compatible board, which include an on-board RFM95/96 LoRa Radio (Semtech SX1276), external antenna, 
 ///   run on 2xAAA batteries and support low power operations. RF95 examples work without modification.
@@ -614,7 +619,7 @@ public:
     /// \param[in] spi Pointer to the SPI interface object to use. 
     ///                Defaults to the standard Arduino hardware SPI interface
     RH_RF95(uint8_t slaveSelectPin = SS, uint8_t interruptPin = 2, RHGenericSPI& spi = hardware_spi);
-  
+    
     /// Initialise the Driver transport hardware and software.
     /// Make sure the Driver is properly configured before calling init().
     /// \return true if initialisation succeeded.
@@ -767,6 +772,56 @@ public:
     /// \return SNR of the last received message in dB
     int lastSNR();
 
+    /// brian.n.norman@gmail.com 9th Nov 2018
+    /// Sets the radio spreading factor.
+    /// valid values are 6 through 12.
+    /// Out of range values below 6 are clamped to 6
+    /// Out of range values above 12 are clamped to 12
+    /// See Semtech DS SX1276/77/78/79 page 27 regarding SF6 configuration.
+    ///
+    /// \param[in] uint8_t sf (spreading factor 6..12)
+    /// \return nothing
+    void     setSpreadingFactor(uint8_t sf);
+ 	
+    /// brian.n.norman@gmail.com 9th Nov 2018
+    /// Sets the radio signal bandwidth
+    /// sbw ranges and resultant settings are as follows:-
+    /// sbw range    actual bw (kHz)
+    /// 0-7800       7.8
+    /// 7801-10400   10.4
+    /// 10401-15600  15.6
+    /// 15601-20800  20.8
+    /// 20801-31250  31.25
+    /// 31251-41700	 41.7
+    /// 41701-62500	 62.5
+    /// 62501-12500  125.0
+    /// 12501-250000 250.0
+    /// >250000      500.0
+    /// NOTE caution Earlier - Semtech do not recommend BW below 62.5 although, in testing
+    /// I managed 31.25 with two devices in close proximity.
+    /// \param[in] sbw long, signal bandwidth e.g. 125000
+    void     setSignalBandwidth(long sbw);
+ 	
+    /// brian.n.norman@gmail.com 9th Nov 2018
+    /// Sets the coding rate to 4/5, 4/6, 4/7 or 4/8.
+    /// Valid denominator values are 5, 6, 7 or 8. A value of 5 sets the coding rate to 4/5 etc.
+    /// Values below 5 are clamped at 5
+    /// values above 8 are clamped at 8
+    /// \param[in] denominator uint8_t range 5..8
+    void     setCodingRate4(uint8_t denominator);
+ 	
+    /// brian.n.norman@gmail.com 9th Nov 2018
+    /// sets the low data rate flag if symbol time exceeds 16ms
+    /// ref: https://www.thethingsnetwork.org/forum/t/a-point-to-note-lora-low-data-rate-optimisation-flag/12007
+    /// called by setBandwidth() and setSpreadingfactor() since these affect the symbol time.
+    void 	 setLowDatarate();
+ 	
+    /// brian.n.norman@gmail.com 9th Nov 2018
+    /// allows the payload CRC bit to be turned on/off. Normally this should be left on
+    /// so that packets with a bad CRC are rejected
+    /// \patam[in] on bool, true turns the payload CRC on, false turns it off
+    void setPayloadCRC(bool on);
+ 	
 protected:
     /// This is a low level function to handle the interrupts for one instance of RH_RF95.
     /// Called automatically by isr*()

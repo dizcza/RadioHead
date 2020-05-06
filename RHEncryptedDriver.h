@@ -7,7 +7,7 @@
 //
 // Author: Philippe.Rochat'at'gmail.com
 // Contributed to the RadioHead project by the author
-// $Id: RHEncryptedDriver.h,v 1.2 2017/10/03 06:04:59 mikem Exp $
+// $Id: RHEncryptedDriver.h,v 1.3 2018/09/23 23:54:01 mikem Exp $
 
 #ifndef RHEncryptedDriver_h
 #define RHEncryptedDriver_h
@@ -50,7 +50,7 @@ public:
     /// \param[in] blockcipher The blockcipher (from arduinolibs) that crypt/decrypt data. Ensure that
     /// the blockcipher has had its key set before sending or receiving messages.
     RHEncryptedDriver(RHGenericDriver& driver, BlockCipher& blockcipher);
-	
+
     /// Calls the real driver's init()
     /// \return The value returned from the driver init() method;
     virtual bool init() { return _driver.init();};

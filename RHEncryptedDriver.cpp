@@ -2,7 +2,7 @@
 //
 // Author: Philippe.Rochat'at'gmail.com
 // Contributed to the RadioHead project by the author
-// $Id: RHEncryptedDriver.cpp,v 1.3 2018/02/11 23:57:18 mikem Exp $
+// $Id: RHEncryptedDriver.cpp,v 1.5 2019/07/14 00:18:48 mikem Exp $
 
 #include <RHEncryptedDriver.h>
 #ifdef RH_ENABLE_ENCRYPTION_MODULE
@@ -22,7 +22,7 @@ bool RHEncryptedDriver::recv(uint8_t* buf, uint8_t* len)
     if (status && buf && len)
     {
 	int blockSize = _blockcipher.blockSize(); // Size of blocks used by encryption
-	int nbBlocks = *len / blockSize; 		  // Number of blocks in that message
+	int nbBlocks = *len / blockSize; 	  // Number of blocks in that message
 	if (nbBlocks * blockSize == *len)
 	{
 	    // Or we have a missmatch ... this is probably not symetrically encrypted 
@@ -37,7 +37,7 @@ bool RHEncryptedDriver::recv(uint8_t* buf, uint8_t* len)
 //		    if (buf[0] > *len - 1)
 //			return false; // Bogus payload length
 		    *len = buf[0]; // First byte contains length
-		    h--;			// First block is of length--
+		    h--;	   // First block is of length--
 		    memmove(buf, buf+1, blockSize - 1);
 		}
 #endif			
@@ -69,7 +69,7 @@ bool RHEncryptedDriver::send(const uint8_t* data, uint8_t len)
     int max_message_length = maxMessageLength();
 #ifdef STRICT_CONTENT_LEN	
     uint8_t nbBlocks = len / blockSize + 1; // How many blocks do we need for that message
-    uint8_t nbBpM = max_message_length + 1 / blockSize; // Max number of blocks per message
+    uint8_t nbBpM = (max_message_length + 1) / blockSize; // Max number of blocks per message
 #else
     uint8_t nbBlocks = (len - 1) / blockSize + 1; // How many blocks do we need for that message
     uint8_t nbBpM = max_message_length / blockSize; // Max number of blocks per message
@@ -79,7 +79,7 @@ bool RHEncryptedDriver::send(const uint8_t* data, uint8_t len)
 #ifdef STRICT_CONTENT_LEN
     for (k = 0; k < nbBpM && k * blockSize < len + 1; k++)
 #else
-    for (k = 0; k < nbBpM && k * blockSize < len ; k++)
+    for (k = 0; k < nbBpM && k * blockSize < len; k++)
 #endif
     {
 	// k blocks in that message
