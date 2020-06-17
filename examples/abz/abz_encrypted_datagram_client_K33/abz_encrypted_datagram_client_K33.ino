@@ -7,15 +7,14 @@
 // http://rweather.github.io/arduinolibs/index.html
 //  Philippe.Rochat'at'gmail.com
 //  06.07.2017
-// It is designed to work with the other example abz_encrypted_datagram_server_K33
-// Tested with K33 custom board, Arduino 1.8.12, GrumpyOldPizza Arduino Core for STM32L0.
+// It is designed to work with the other example abz_encrypted_datagram_server_xx
+// Tested with K33 custom board, Arduino 1.8.13, GrumpyOldPizza Arduino Core for STM32L0.
 
 #include <SPI.h>
 #include <RH_ABZ.h>
 #include <RHEncryptedDriver.h>
 #include <Speck.h>
 #include <RHDatagram.h>
-extern "C" void SX1276SetBoardTcxo( bool state );
 
 #define CLIENT_ADDRESS 1
 #define SERVER_ADDRESS 2

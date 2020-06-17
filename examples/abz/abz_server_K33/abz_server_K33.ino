@@ -4,8 +4,8 @@
 // with the RH_ABZ class. RH_ABZ class does not provide for addressing or
 // reliability, so you should only use RH_ABZ directly if you do not need the higher
 // level messaging abilities.
-// It is designed to work with the other example abz_server
-// Tested with Tested with EcoNode SmartTrap, Arduino 1.8.9, GrumpyOldPizza Arduino Core for STM32L0.
+// It is designed to work with the other example abz_client_xx
+// Tested with K33 custom board, Arduino 1.8.13, GrumpyOldPizza Arduino Core for STM32L0.
 
 #include <SPI.h>
 #include <RH_ABZ.h>
@@ -34,8 +34,6 @@ void setup()
   // On the K33 board, the radio TCXO is powered by MCU output PH1, so you have
   // to enable the power to the TCXO before telling the radio to use it
   SX1276SetBoardTcxo(true);
-  delay(1);
-  abz.enableTCXO(true);
 
   abz.setFrequency(868.0);
 

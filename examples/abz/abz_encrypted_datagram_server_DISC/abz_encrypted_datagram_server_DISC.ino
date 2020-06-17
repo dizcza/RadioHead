@@ -15,7 +15,6 @@
 #include <RHEncryptedDriver.h>
 #include <Speck.h>
 #include <RHDatagram.h>
-extern "C" void SX1276SetBoardTcxo( bool state ); 
 
 #define CLIENT_ADDRESS 1
 #define SERVER_ADDRESS 2

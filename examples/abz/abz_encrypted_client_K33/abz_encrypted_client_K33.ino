@@ -4,12 +4,13 @@
 // http://rweather.github.io/arduinolibs/index.html
 //  Philippe.Rochat'at'gmail.com
 //  06.07.2017
+// It is designed to work with the other example abz_encrypted_server_xx
+// Tested with K33 custom board, Arduino 1.8.13, GrumpyOldPizza Arduino Core for STM32L0.
 
 #include <SPI.h>
 #include <RH_ABZ.h>
 #include <RHEncryptedDriver.h>
 #include <Speck.h>
-extern "C" void SX1276SetBoardTcxo( bool state );
 
 RH_ABZ abz;
 Speck myCipher;   // Instanciate a Speck block ciphering

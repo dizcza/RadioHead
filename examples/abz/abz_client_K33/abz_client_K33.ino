@@ -4,12 +4,11 @@
 // with the RH_ABZ class. RH_ABZ class does not provide for addressing or
 // reliability, so you should only use RH_ABZ directly if you do not need the higher
 // level messaging abilities.
-// It is designed to work with the other example abz_server
-// Tested with Tested with EcoNode SmartTrap, Arduino 1.8.9, GrumpyOldPizza Arduino Core for STM32L0.
+// It is designed to work with the other example abz_server_xx
+// Tested with K33 custom board, Arduino 1.8.13, GrumpyOldPizza Arduino Core for STM32L0.
 
 #include <SPI.h>
 #include <RH_ABZ.h>
-extern "C" void SX1276SetBoardTcxo( bool state );
 
 // Singleton instance of the radio driver
 RH_ABZ abz;

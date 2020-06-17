@@ -1,17 +1,19 @@
-// abz_server.pde
+// abz_encrypted_server.pde
 // -*- mode: C++ -*-
-// Example sketch showing how to create a simple messageing server
-// with the RH_ABZ class. RH_ABZ class does not provide for addressing or
-// reliability, so you should only use RH_ABZ directly if you do not need the higher
-// level messaging abilities.
-// It is designed to work with the other example abz_server
-// Tested with Tested with EcoNode SmartTrap, Arduino 1.8.9, GrumpyOldPizza Arduino Core for STM32L0.
+// Example sketch showing how to create an unreliable messageing server with encrypted communications,
+// using the RH_ABZ driver to control a SX1276 radio in Murata CMWX1ZZABZ module.
+// In order for this to compile you MUST uncomment the #define RH_ENABLE_ENCRYPTION_MODULE line
+// at the bottom of RadioHead.h, AND you MUST have installed the Crypto directory from arduinolibs:
+// http://rweather.github.io/arduinolibs/index.html
+//  Philippe.Rochat'at'gmail.com
+//  06.07.2017
+// It is designed to work with the other example abz_encrypted_client_xx
+// Tested with K33 custom board, Arduino 1.8.13, GrumpyOldPizza Arduino Core for STM32L0.
 
 #include <SPI.h>
 #include <RH_ABZ.h>
 #include <RHEncryptedDriver.h>
 #include <Speck.h>
-extern "C" void SX1276SetBoardTcxo( bool state );
 
 // Singleton instance of the radio driver
 RH_ABZ abz;
