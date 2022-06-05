@@ -32,7 +32,7 @@ bool RHSPIDriver::init()
     // This delay is needed for ATMega and maybe some others, but
     // 100ms is too long for STM32L0, and somehow can cause the USB interface to fail
     // in some versions of the core.
-#if (RH_PLATFORM == RH_PLATFORM_STM32L0) && (defined STM32L082xx || defined STM32L072xx)
+#if (RH_PLATFORM == RH_PLATFORM_STM32L0) && (defined STM32L082xx || defined STM32L072xx || defined STM32L052xx)
     delay(10);
 #else
     delay(100);

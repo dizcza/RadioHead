@@ -1,4 +1,4 @@
-// abz_encrypted_datagram_client.pde
+// lgt92_encrypted_datagram_client.pde
 // -*- mode: C++ -*-
 // Example sketch showing how to create an addressed unreliable messageing client with encrypted communications
 // with the RHDatagram class, using the RH_L0RA driver to control a SX1276 radio in Murata CMWX1ZZABZ module.
@@ -7,7 +7,7 @@
 // http://rweather.github.io/arduinolibs/index.html
 //  Philippe.Rochat'at'gmail.com
 //  06.07.2017
-// It is designed to work with the other example abz_encrypted_datagram_server_DISC
+// It is designed to work with the other example lgt92_encrypted_datagram_server_DISC
 // Tested with ST Discovery B-L072Z-LRWAN1, Arduino 1.8.12, GrumpyOldPizza Arduino Core for STM32L0.
 
 #include <SPI.h>
@@ -19,9 +19,9 @@
 #define CLIENT_ADDRESS 1
 #define SERVER_ADDRESS 2
 
-RH_L0RA abz;
+RH_L0RA rfm95;
 Speck myCipher;   // Instanciate a Speck block ciphering
-RHEncryptedDriver encryptedLoRa(abz, myCipher); // Instantiate the driver with those two
+RHEncryptedDriver encryptedLoRa(rfm95, myCipher); // Instantiate the driver with those two
 
 // Class to manage message delivery and receipt, using the driver declared above
 RHDatagram manager(encryptedLoRa, CLIENT_ADDRESS);
@@ -38,18 +38,18 @@ void setup()
   
   Serial.begin(9600);
   //while (!Serial) ; // Wait for serial port to be available
-  Serial.println("ABZ Encrypted Client");
+  Serial.println("LGT92 Encrypted Datagram Client");
 
   if (!manager.init())
     Serial.println("init failed");
   
   SX1276SetBoardTcxo(true);
 
-  abz.setFrequency(frequency);
-  abz.setTxPower(3);
+  rfm95.setFrequency(frequency);
+  rfm95.setTxPower(3);
   // You can change the moduation speed etc from the default
-//  abz.setModemConfig(RH_RF95::Bw125Cr45Sf128);
-  //abz.setModemConfig(RH_RF95::Bw125Cr45Sf2048);
+//  rfm95.setModemConfig(RH_RF95::Bw125Cr45Sf128);
+  //rfm95.setModemConfig(RH_RF95::Bw125Cr45Sf2048);
     
   myCipher.setKey(encryptkey, sizeof(encryptkey));
   
@@ -66,7 +66,7 @@ void loop()
   digitalWrite(PIN_LED2, 1);  //B
   
   Serial.println("Sending to ABZ server");
-  // Send a message to rf95_server
+  // Send a message to lgt92_server
   uint8_t data[] = "Hello World!";
   manager.sendto(data, sizeof(data), SERVER_ADDRESS);
   manager.waitPacketSent();
@@ -76,13 +76,13 @@ void loop()
   uint8_t len = sizeof(buf);
   uint8_t from, to; 
 // You might need a longer timeout for slow modulatiuon schemes and/or long messages
-  if (abz.waitAvailableTimeout(3000)) { 
+  if (rfm95.waitAvailableTimeout(3000)) { 
     // Should be a reply message for us now   
     if (manager.recvfrom(buf, &len, &from, &to)){
       Serial.print("got reply: ");
       Serial.println((char*)buf);
 //      Serial.print("RSSI: ");
-//      Serial.println(abz.lastRssi(), DEC);    
+//      Serial.println(rfm95.lastRssi(), DEC);    
       digitalWrite(PIN_LED, 1);
     } else {
       Serial.println("recv failed");  

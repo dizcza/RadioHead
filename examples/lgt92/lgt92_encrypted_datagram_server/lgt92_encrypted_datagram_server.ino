@@ -1,4 +1,4 @@
-// abz_encrypted_datagram_server.pde
+// lgt92_encrypted_datagram_server.pde
 // -*- mode: C++ -*-
 // Example sketch showing how to create an addressed unreliable messageing server with encrypted communications
 // with the RHDatagram class, using the RH_L0RA driver to control a SX1276 radio in Murata CMWX1ZZABZ module.
@@ -7,7 +7,7 @@
 // http://rweather.github.io/arduinolibs/index.html
 //  Philippe.Rochat'at'gmail.com
 //  06.07.2017
-// It is designed to work with the other example abz_encrypted_datagram_client_DISC
+// It is designed to work with the other example lgt92_encrypted_datagram_client_DISC
 // Tested with ST Discovery B-L072Z-LRWAN1, Arduino 1.8.12, GrumpyOldPizza Arduino Core for STM32L0.
 
 #include <SPI.h>
@@ -20,9 +20,9 @@
 #define SERVER_ADDRESS 2
 
 // Singleton instance of the radio driver
-RH_L0RA abz;
+RH_L0RA rfm95;
 Speck myCipher;   // Instanciate a Speck block ciphering
-RHEncryptedDriver encryptedLoRa(abz, myCipher); // Instantiate the driver with those two
+RHEncryptedDriver encryptedLoRa(rfm95, myCipher); // Instantiate the driver with those two
 
 // Class to manage message delivery and receipt, using the driver declared above
 RHDatagram manager(encryptedLoRa, SERVER_ADDRESS);
@@ -38,7 +38,7 @@ void setup()
 
   Serial.begin(9600);
   while (!Serial) ;
-  Serial.println("ABZ Encrypted Server"); 
+  Serial.println("LGT92 Encrypted Server"); 
 
   if (!manager.init())
     Serial.println("init failed");  
@@ -48,15 +48,15 @@ void setup()
   // to enable the power to the TCXO before telling the radio to use it
   SX1276SetBoardTcxo(true);
 
-  abz.setFrequency(frequency);
+  rfm95.setFrequency(frequency);
 
   // You can change the moduation speed etc from the default
-//  abz.setModemConfig(RH_RF95::Bw125Cr45Sf128);
-  //abz.setModemConfig(RH_RF95::Bw125Cr45Sf2048);
+//  rfm95.setModemConfig(RH_RF95::Bw125Cr45Sf128);
+  //rfm95.setModemConfig(RH_RF95::Bw125Cr45Sf2048);
 
   // The default transmitter power is 13dBm, using PA_BOOST.
   // You can set transmitter powers from 2 to 20 dBm:
-  abz.setTxPower(3); // Max power
+  rfm95.setTxPower(3); // Max power
 
   myCipher.setKey(encryptkey, sizeof(encryptkey));
 }
@@ -78,11 +78,11 @@ void loop()
       Serial.print("got request: ");
       Serial.println((char*)buf);
 //      Serial.print("RSSI: ");
-//      Serial.println(abz.lastRssi(), DEC);
+//      Serial.println(rfm95.lastRssi(), DEC);
       // Send a reply
       uint8_t data[] = "And hello back to you";
       manager.sendto(data, sizeof(data), CLIENT_ADDRESS);
-      abz.waitPacketSent();
+      rfm95.waitPacketSent();
       Serial.println("Sent a reply");
       digitalWrite(PIN_LED, 1);
     } else {

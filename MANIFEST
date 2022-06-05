@@ -5,8 +5,8 @@ RadioHead/library.properties
 RadioHead/RadioHead.h
 RadioHead/RH_ASK.cpp
 RadioHead/RH_ASK.h
-RadioHead/RH_ABZ.cpp
-RadioHead/RH_ABZ.h
+RadioHead/RH_L0RA.cpp
+RadioHead/RH_L0RA.h
 RadioHead/RHCRC.cpp
 RadioHead/RHCRC.h
 RadioHead/RHDatagram.cpp

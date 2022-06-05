@@ -26,7 +26,11 @@ PROGMEM static const RH_RF95::ModemConfig MODEM_CONFIG_TABLE[] =
     { 0x48,   0x94,    0x04}, // Bw31_25Cr48Sf512, AGC enabled
     { 0x78,   0xc4,    0x0c}, // Bw125Cr48Sf4096, AGC enabled
     { 0x72,   0xb4,    0x04}, // Bw125Cr45Sf2048, AGC enabled
-    
+    { 0x78,   0x94,    0x04}, // Bw125Cr48Sf512,  AGC enabled (SF 9)
+    { 0x78,   0xa4,    0x04}, // Bw125Cr48Sf1024, AGC enabled (SF 10)
+    { 0x76,   0xa4,    0x04}, // Bw125Cr47Sf1024, AGC enabled (SF 10)
+    { 0x74,   0xa4,    0x04}, // Bw125Cr46Sf1024, AGC enabled (SF 10)
+
 };
 
 RH_RF95::RH_RF95(uint8_t slaveSelectPin, uint8_t interruptPin, RHGenericSPI& spi)
@@ -52,7 +56,7 @@ bool RH_RF95::init()
     	return false;
     }
 #endif
-    // For some subclasses (eg RH_ABZ)  we dont want to set up interrupt
+    // For some subclasses (eg RH_L0RA) we dont want to set up interrupt
     int interruptNumber = NOT_AN_INTERRUPT;
     if (_interruptPin != RH_INVALID_PIN)
     {

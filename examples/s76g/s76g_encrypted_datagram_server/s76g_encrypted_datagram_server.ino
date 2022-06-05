@@ -1,4 +1,4 @@
-// abz_encrypted_datagram_server.pde
+// s76g_encrypted_datagram_server.pde
 // -*- mode: C++ -*-
 // Example sketch showing how to create an addressed unreliable messageing server with encrypted communications
 // with the RHDatagram class, using the RH_L0RA driver to control a SX1276 radio in Murata CMWX1ZZABZ module.
@@ -7,8 +7,8 @@
 // http://rweather.github.io/arduinolibs/index.html
 //  Philippe.Rochat'at'gmail.com
 //  06.07.2017
-// It is designed to work with the other example abz_encrypted_datagram_client_DISC
-// Tested with ST Discovery B-L072Z-LRWAN1, Arduino 1.8.12, GrumpyOldPizza Arduino Core for STM32L0.
+// It is designed to work with the other example s76g_encrypted_datagram_client_xxx
+// Tested with LILYGO T-Impulse Wristband, Arduino 1.8.13, GrumpyOldPizza Arduino Core for STM32L0.
 
 #include <SPI.h>
 #include <RH_L0RA.h>
@@ -20,9 +20,9 @@
 #define SERVER_ADDRESS 2
 
 // Singleton instance of the radio driver
-RH_L0RA abz;
+RH_L0RA s76g;
 Speck myCipher;   // Instanciate a Speck block ciphering
-RHEncryptedDriver encryptedLoRa(abz, myCipher); // Instantiate the driver with those two
+RHEncryptedDriver encryptedLoRa(s76g, myCipher); // Instantiate the driver with those two
 
 // Class to manage message delivery and receipt, using the driver declared above
 RHDatagram manager(encryptedLoRa, SERVER_ADDRESS);
@@ -30,68 +30,53 @@ RHDatagram manager(encryptedLoRa, SERVER_ADDRESS);
 float frequency = 868.0; // Change the frequency here. 
 unsigned char encryptkey[16] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16}; // The very secret key
 
-void setup() 
-{  
-  pinMode(PIN_LED3, OUTPUT);  //RED  
-  pinMode(PIN_LED,  OUTPUT);  //GREEN
-  pinMode(PIN_LED2, OUTPUT);  //BLUE
+
+void setup() {  
 
   Serial.begin(9600);
   while (!Serial) ;
-  Serial.println("ABZ Encrypted Server"); 
+  Serial.println("S76G Encrypted Datagram Server"); 
 
   if (!manager.init())
     Serial.println("init failed");  
   
-  // On the EcoNode SmartTrap board, the radio TCXO is always powered, so 
-  // you can tell the radio to use the TCXO like this/. For other boards, you may need 
-  // to enable the power to the TCXO before telling the radio to use it
-  SX1276SetBoardTcxo(true);
-
-  abz.setFrequency(frequency);
+  s76g.setFrequency(frequency);
 
   // You can change the moduation speed etc from the default
-//  abz.setModemConfig(RH_RF95::Bw125Cr45Sf128);
-  //abz.setModemConfig(RH_RF95::Bw125Cr45Sf2048);
+  //s76g.setModemConfig(RH_RF95::Bw125Cr45Sf128);
+  //s76g.setModemConfig(RH_RF95::Bw125Cr45Sf2048);
 
   // The default transmitter power is 13dBm, using PA_BOOST.
   // You can set transmitter powers from 2 to 20 dBm:
-  abz.setTxPower(3); // Max power
+  s76g.setTxPower(3);
 
   myCipher.setKey(encryptkey, sizeof(encryptkey));
 }
 
-void loop()
-{
-  digitalWrite(PIN_LED3, 0);  //R
-  digitalWrite(PIN_LED,  0);  //G
-  digitalWrite(PIN_LED2, 1);  //B
-  
+void loop() { 
   if (manager.available()){
+    //Serial.println("manager.available()");
     // Should be a message for us now   
     uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
     uint8_t len = sizeof(buf);
     uint8_t from, to;    
     if (manager.recvfrom(buf, &len, &from, &to)) {
-       digitalWrite(PIN_LED, 1);
-//      RH_L0RA::printBuffer("request: ", buf, len);
+
+      //RH_L0RA::printBuffer("request: ", buf, len);
       Serial.print("got request: ");
       Serial.println((char*)buf);
-//      Serial.print("RSSI: ");
-//      Serial.println(abz.lastRssi(), DEC);
+      Serial.print("RSSI: ");
+      Serial.println(s76g.lastRssi(), DEC);
+
       // Send a reply
       uint8_t data[] = "And hello back to you";
       manager.sendto(data, sizeof(data), CLIENT_ADDRESS);
-      abz.waitPacketSent();
+      s76g.waitPacketSent();
       Serial.println("Sent a reply");
-      digitalWrite(PIN_LED, 1);
     } else {
       Serial.println("recv failed");
-      digitalWrite(PIN_LED3, 1);
     }
   } else {
-    Serial.println("Manager not available!");
-    digitalWrite(PIN_LED3, 1);
+    Serial.println("no manager available");
   }
-  digitalWrite(PIN_LED2, 0);
 }

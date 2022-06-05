@@ -129,8 +129,10 @@ Works with a range of inexpensive ASK (amplitude shift keying) RF transceivers s
 (also known as ST-RX04-ASK) receiver; TX-C1 transmitter and DR3100 transceiver; FS1000A/XY-MK-5V transceiver;
 HopeRF RFM83C / RFM85. Supports ASK (OOK).
 
-- RH_ABZ Works with EcoNode SmartTrap, Tlera Grasshopper and family. Almost any board equipped with a muRata cmwx1zzabz module
-should work. Tested with EcoNode SmartTrap, Arduino 1.8.9, GrumpyOldPizza Arduino Core for STM32L0.
+- RH_L0RA (RH_ABZ till version 1.121) 
+Works with Tlera Grasshopper and family, STM B-L072Z-LRWAN1, EcoNode SmartTrap, LGT92, TTGO T-Impulse Wristband.
+Almost any board equipped with a muRata cmwx1zzabz or RHF76-052 modules and STM32L0+SX1276/RFM95 combo should work.
+Tested with EcoNode SmartTrap, Arduino 1.8.9, GrumpyOldPizza Arduino Core for STM32L0.
 When building for EcoNode SmartTrap in Arduino IDE, select board type Grasshopper-L082CZ.
 This chip and GrumpyOldPizza Arduino Core for STM32L0 are now supported by PlatformIO: 
 https://docs.platformio.org/en/latest/platforms/ststm32.html#arduino-stm32l0-configuration-system
@@ -1172,6 +1174,12 @@ k             Fix SPI bus speed errors on 8MHz Arduinos.
 
 \version 1.121 2022-02-02
              Restored RH_RF95 code to clear the IRQ flags (twice).
+
+\version 1.121+ 2022-02-24
+       RH_ABZ renamed to RH_L0RA due to added support for other STM32L0+SX1276 devices like Dragino LGT92 Tracker, RHF76-52 module
+       and S76G based LilyGo T-Impulse Wristband and T=Motion board, using UT2UH fork of Grumpy Old Pizza Arduino Core.
+	     Requires the Grumpy Old Pizza Arduino Core installed per https://github.com/UT2UH/ArduinoCore-stm32l0/tree/UT2UH
+	     Examples provided.
 
 
 \author  Mike McCauley. DO NOT CONTACT THE AUTHOR DIRECTLY. USE THE GOOGLE GROUP GIVEN ABOVE
