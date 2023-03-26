@@ -60,12 +60,12 @@
 ///
 /// \par Temperature Controlled Crystal Oscillator (TCXO)
 ///
-/// The muRata cmwx1zzabz module includes a TCXO. Pins to enable the TCXO and to connect to 32MHz output to the radio
-/// are exposed on the module. Some boards (Econode SmartTrap for example) permanently power the TCXO and permanenetly
-/// connect it to the radio. Other boards (Grasshopper for example) have the TCXO enable connected to a GPIO pin, allowing
-/// the TCXO to be controlled by software. Different boards may use different GPIO pins to control the TCXO.
-/// The RHF76-052 module, AcSIP S76G module in T-Impulse Wristband, Dragino LGT92 Tracker permanently power the TCXO
-/// and permanenetly connect it to the radio.
+/// The muRata cmwx1zzabz module and AcSIP S76G/S78G includes a TCXO. Pins to enable the TCXO and to connect to 32MHz
+/// output to the radio are exposed on the module. Some boards (Econode SmartTrap, Dragino LGT92 Tracker, RHF76-052
+/// and RHF78-052 modules for example) permanently power the TCXO and permanenetly connect it to the radio. 
+/// Other boards (Grasshopper and AcSIP S76G based TTGO T-Impulse Wristband and T-Motion board for example) have the
+/// TCXO enable connected to a GPIO pin, allowing the TCXO to be controlled by software. 
+/// Different boards may use different GPIO pins to control the TCXO.
 ///
 /// The SX1276 radio can be configured to use the TCXO, and the Arduino Core defaults the radio to using TCXO.
 /// Therefore it is important that you ensure the TCXO is powered up, at least when you want the radio to operate.
@@ -75,7 +75,7 @@
 /// by controlling the correct pin for your board.
 /// By default the core disables TCXO at the end of initialisation, so by the time your sketch starts to run
 /// the TCXO is powered off.
-/// You will almost certainly need to call
+/// In some cases you will need to call BEFORE manager.init();
 /// \code
 /// SX1276SetBoardTcxo(true); 
 /// \endcode
@@ -179,7 +179,7 @@ extern "C" void SX1276SetBoardTcxo( bool state );
     #define RADIO_DIO_0                          STM32L0_GPIO_PIN_PC13
     #define RADIO_DIO_1                          STM32L0_GPIO_PIN_PB10
     #define RADIO_DIO_2                          STM32L0_GPIO_PIN_PB11
-#elif defined (ARDUINO_T_IMPULSE) || defined (ARDUINO_K48_S76G)  || defined (ARDUINO_K48_S76G_SWD) || defined (ARDUINO_K48_S76G_I2C)  || defined (ARDUINO_K76_S76S)
+#elif defined (ARDUINO_T_IMPULSE) || defined (ARDUINO_K48_S76G)  || defined (ARDUINO_K48_S76G_SWD) || defined (ARDUINO_K76_S76S) || defined (ARDUINO_K76_S76S_STL) 
     #define RADIO_SPI_INSTANCE                   STM32L0_SPI_INSTANCE_SPI2
     #define RADIO_MOSI                           STM32L0_GPIO_PIN_PB15_SPI2_MOSI
     #define RADIO_MISO                           STM32L0_GPIO_PIN_PB14_SPI2_MISO
@@ -191,7 +191,7 @@ extern "C" void SX1276SetBoardTcxo( bool state );
     #define RADIO_DIO_2                          STM32L0_GPIO_PIN_PB9
 
     #define RADIO_ANT_SWITCH_RX                  STM32L0_GPIO_PIN_PA1
-#elif defined (ARDUINO_RHF76_052) || defined (ARDUINO_K52_RHF76_052)
+#elif defined (ARDUINO_RHF76_052) || defined (ARDUINO_K52_RHF76_052) || defined (ARDUINO_K52_RHF78_052)
     #define RADIO_SPI_INSTANCE                   STM32L0_SPI_INSTANCE_SPI1
     #define RADIO_MOSI                           STM32L0_GPIO_PIN_PA7_SPI1_MOSI
     #define RADIO_MISO                           STM32L0_GPIO_PIN_PA6_SPI1_MISO

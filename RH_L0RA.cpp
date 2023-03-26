@@ -71,12 +71,12 @@ bool RH_L0RA::init()
 #if defined (ARDUINO_LGT92) || defined (ARDUINO_K92_L072Z)
     // RFM95 module has an antenna switch which is driven by SX1276 xx pin the right way to connect the antenna
     // to the appropriate SX1276 RX or PA_BOOST pins respecitvely.
-#elif defined (ARDUINO_T_IMPULSE) || defined (ARDUINO_K48_S76G)  || defined (ARDUINO_K48_S76G_SWD) || defined (ARDUINO_K48_S76G_I2C) || defined (ARDUINO_K76_S76S)
+#elif defined (ARDUINO_T_IMPULSE) || defined (ARDUINO_K48_S76G)  || defined (ARDUINO_K48_S76G_SWD) || defined (ARDUINO_K76_S76S_STL) || defined (ARDUINO_K76_S76S)
     // AcSIP S76G module has a SE2435L 860 to 930 MHz FEM which must be driven the right way to connect the antenna
     // to the appropriate SX1276 pins. STM32L0_GPIO_PIN_PA1 selects RX or PA_BOOST respecitvely.
     // See modeWillChange() for implementation of pin twiddling when the transmitter is on
     stm32l0_gpio_pin_configure(RADIO_ANT_SWITCH_RX, (STM32L0_GPIO_PARK_NONE | STM32L0_GPIO_PUPD_NONE | STM32L0_GPIO_OSPEED_LOW | STM32L0_GPIO_OTYPE_PUSHPULL | STM32L0_GPIO_MODE_OUTPUT));
-#elif defined (ARDUINO_RHF76_052) || defined (ARDUINO_K52_RHF76_052)
+#elif defined (ARDUINO_RHF76_052) || defined (ARDUINO_K52_RHF76_052) || defined (ARDUINO_K52_RHF78_052)
     // RHF76 module has two switches for LF and HF antennas which must be driven the right way to connect the antenna
     // to the appropriate SX1276 pins.
     stm32l0_gpio_pin_configure(RADIO_ANT_SWITCH_RX,     (STM32L0_GPIO_PARK_NONE | STM32L0_GPIO_PUPD_NONE | STM32L0_GPIO_OSPEED_LOW | STM32L0_GPIO_OTYPE_PUSHPULL | STM32L0_GPIO_MODE_OUTPUT));
@@ -120,12 +120,16 @@ bool RH_L0RA::modeWillChange(RHMode mode)
     {
 #if defined (ARDUINO_LGT92) || defined (ARDUINO_K92_L072Z)
     //RFM95 uses its own pin to switch TX/RX FEM
-#elif defined (ARDUINO_T_IMPULSE) || defined (ARDUINO_K48_S76G)  || defined (ARDUINO_K48_S76G_SWD) || defined (ARDUINO_K48_S76G_I2C) || defined (ARDUINO_K76_S76S)
+#elif defined (ARDUINO_T_IMPULSE) || defined (ARDUINO_K48_S76G)  || defined (ARDUINO_K48_S76G_SWD) || defined (ARDUINO_K76_S76S_STL) || defined (ARDUINO_K76_S76S)
 	stm32l0_gpio_pin_write(RADIO_ANT_SWITCH_RX, 0);
 #elif defined (ARDUINO_RHF76_052) || defined (ARDUINO_K52_RHF76_052)
 	stm32l0_gpio_pin_write(RADIO_ANT_SWITCH_RX, 0);
 	// Tell the antenna switch to connect to one of the transmitter output pins
 	stm32l0_gpio_pin_write(RADIO_ANT_SWITCH_TX_RFO, _useRFO ? 1 : 0);
+#elif defined (ARDUINO_K52_RHF78_052)
+	stm32l0_gpio_pin_write(RADIO_ANT_SWITCH_RX, 1);
+	// Tell the antenna switch to connect to one of the transmitter output pins
+	stm32l0_gpio_pin_write(RADIO_ANT_SWITCH_TX_RFO, _useRFO ? 0 : 1);
 #else
 	stm32l0_gpio_pin_write(RADIO_ANT_SWITCH_RX, 0);
 	stm32l0_gpio_pin_write(RADIO_ANT_SWITCH_TX_RFO, _useRFO ? 1 : 0);
@@ -135,11 +139,13 @@ bool RH_L0RA::modeWillChange(RHMode mode)
     else
     {
 #if defined (ARDUINO_LGT92) || defined (ARDUINO_K92_L072Z)
-#elif defined (ARDUINO_T_IMPULSE) || defined (ARDUINO_K48_S76G)  || defined (ARDUINO_K48_S76G_SWD) || defined (ARDUINO_K48_S76G_I2C) || defined (ARDUINO_K76_S76S)
+#elif defined (ARDUINO_T_IMPULSE) || defined (ARDUINO_K48_S76G)  || defined (ARDUINO_K48_S76G_SWD) || defined (ARDUINO_K76_S76S_STL) || defined (ARDUINO_K76_S76S)
 	stm32l0_gpio_pin_write(RADIO_ANT_SWITCH_RX, 1);
 #elif defined (ARDUINO_RHF76_052) || defined (ARDUINO_K52_RHF76_052)
 	stm32l0_gpio_pin_write(RADIO_ANT_SWITCH_RX, 1);
-	// Enabling the RX from the antenna switch improves reception RSSI by about 5
+	stm32l0_gpio_pin_write(RADIO_ANT_SWITCH_TX_RFO, 0);
+#elif defined (ARDUINO_K52_RHF78_052)
+	stm32l0_gpio_pin_write(RADIO_ANT_SWITCH_RX, 0);
 	stm32l0_gpio_pin_write(RADIO_ANT_SWITCH_TX_RFO, 0);
 #else
 	stm32l0_gpio_pin_write(RADIO_ANT_SWITCH_RX, 1);
