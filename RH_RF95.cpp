@@ -13,7 +13,7 @@ RH_DECLARE_MUTEX(lock);
 // Interrupt vectors for the 3 Arduino interrupt pins
 // Each interrupt can be handled by a different instance of RH_RF95, allowing you to have
 // 2 or more LORAs per Arduino
-RH_RF95* RH_RF95::_deviceForInterrupt[RH_RF95_NUM_INTERRUPTS] = {0, 0, 0};
+RH_RF95* RH_RF95::_deviceForInterrupt[RH_RF95_NUM_INTERRUPTS]{};
 uint8_t RH_RF95::_interruptCount = 0; // Index into _deviceForInterrupt for next device
 
 // These are indexed by the values of ModemConfigChoice

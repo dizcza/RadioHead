@@ -16,7 +16,7 @@
 
 // This is the maximum number of interrupts the driver can support
 // Most Arduinos can handle 2, Megas can handle more
-#define RH_RF95_NUM_INTERRUPTS 3
+#define RH_RF95_NUM_INTERRUPTS 1
 
 // Max number of octets the LORA Rx/Tx FIFO can hold
 #define RH_RF95_FIFO_SIZE 255
@@ -853,7 +853,7 @@ protected:
     /// This is a low level function to handle the interrupts for one instance of RH_RF95.
     /// Called automatically by isr*()
     /// Should not need to be called by user code.
-    void           handleInterrupt();
+    virtual void RH_INTERRUPT_ATTR handleInterrupt();
 
     /// Examine the revceive buffer to determine whether the message is for this node
     void validateRxBuf();

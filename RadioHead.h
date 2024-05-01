@@ -1445,7 +1445,10 @@ these examples and explanations and extend them to suit your needs.
 #define RH_PLATFORM_ATTINY_MEGA      18
 #define RH_PLATFORM_STM32L0          19
 #define RH_PLATFORM_RASPI_PICO       20
-						   
+
+// use mutex for multithreading
+#define RH_USE_MUTEX
+
 ////////////////////////////////////////////////////
 // Select platform automatically, if possible
 #ifndef RH_PLATFORM
